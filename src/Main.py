@@ -12,5 +12,11 @@ n = len(a)
 c = (matrixToEdges(a, b))
 print(c)
 
-print(searchKruskal(c, n))
-print(searchPrim(c, n))
+drawGraph(a, b)
+
+p = (searchPrim(c, n))
+k = (searchKruskal(c, n))
+print(p)
+print(k)
+showMST(a, b, p)
+showMST(a, b, k)
