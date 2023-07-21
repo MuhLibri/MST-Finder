@@ -1,4 +1,4 @@
-from Utils import isCircuit
+from Helper import isCircuit
 
 
 def searchKruskal(edgeList: list[tuple((str, str, int))], n: int) -> list[tuple((str, str, int))]:
