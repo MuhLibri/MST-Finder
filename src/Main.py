@@ -1,22 +1,22 @@
 from Utils import *
-from Prim import *
-from Kruskal import *
+from Prim import searchPrim
+from Kruskal import searchKruskal
 
-a = readFile()
+adjacencyMatrix = readFile()
 
-b = []
-for i in range(len(a)):
-    b.append(str(i+1))
+nameList = []
+for i in range(len(adjacencyMatrix)):
+    nameList.append(str(i+1))
 
-n = len(a)
-c = (matrixToEdges(a, b))
-print(c)
+n = len(adjacencyMatrix)
+edgeList = (matrixToEdges(adjacencyMatrix, nameList))
+print(edgeList)
 
-drawGraph(a, b)
+drawGraph(adjacencyMatrix, nameList)
 
-p = (searchPrim(c, n))
-k = (searchKruskal(c, n))
+p = (searchPrim(edgeList, n))
+k = (searchKruskal(edgeList, n))
 print(p)
 print(k)
-showMST(a, b, p)
-showMST(a, b, k)
+showMST(adjacencyMatrix, nameList, p)
+showMST(adjacencyMatrix, nameList, k)
