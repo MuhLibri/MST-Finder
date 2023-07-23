@@ -1,7 +1,8 @@
 from tkinter import *
+from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import font
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
 import networkx as nx
 from Prim import searchPrim
@@ -45,8 +46,8 @@ class GUI(Tk):
         self.resultText = Text(frameResult, height=1, width=10, font=custom_font, padx=6, pady=6, relief="sunken")
         self.resultText.config(state=DISABLED)
         # Config Section
-        addNodeButton = Button(frameConfig, text="Add Node", font=custom_font, command=self.addNode, width=10)
-        deleteNodeButton = Button(frameConfig, text="Delete Node", font=custom_font, command=self.deleteNode, width=10)
+        addNodeButton = Button(frameConfig, text="Add Node/Edge", font=custom_font, command=self.addWindow, width=15)
+        deleteNodeButton = Button(frameConfig, text="Delete Node/Edge", font=custom_font, command=self.deleteNodeWindow, width=15)
         # Pack
         algorithmLabel.pack(padx=20, pady=(20, 0), anchor="w")
         primButton.pack(padx=20, anchor="w")
@@ -67,10 +68,13 @@ class GUI(Tk):
         # Frame Graph
         frameGraph = Frame(self, height=600, width=900, bg="#777778")
         # Canvas
-        fig = plt.figure(figsize=(9, 6))
+        fig = plt.figure(figsize=(9, 5))
         self.canvas = FigureCanvasTkAgg(fig, master=frameGraph)
+        toolbar = NavigationToolbar2Tk(self.canvas, frameGraph, pack_toolbar=False)
+        toolbar.update()
         # Pack
         self.canvas.get_tk_widget().pack(expand=True, fill=BOTH)
+        toolbar.pack(anchor="w", fill=X)
         frameGraph.pack(side=TOP, expand=TRUE, fill=BOTH, padx=mainPadding, pady=(mainPadding, 0))
 
         # Frame Bottom
@@ -84,7 +88,7 @@ class GUI(Tk):
         # Pack
         openFileButton.pack(side=LEFT)
         self.fileText.pack(side=RIGHT, expand=TRUE, fill=X)
-        frameOpenFile.pack(side=LEFT, anchor="n", expand=TRUE, fill=X)
+        frameOpenFile.pack(side=TOP, expand=TRUE, fill=X, anchor="n")
         frameBottom.pack(side=BOTTOM, expand=TRUE, fill=X, padx=mainPadding)
 
 
@@ -112,10 +116,7 @@ class GUI(Tk):
         plt.clf()
 
         self.graph = nx.Graph()
-
-        for name in self.nameList:
-            self.graph.add_node(name)
-
+        self.graph.add_nodes_from(self.nameList)
         self.graph.add_weighted_edges_from(self.edgeList)
 
         self.pos = nx.spring_layout(self.graph, seed=5)
@@ -139,9 +140,9 @@ class GUI(Tk):
 
     def solve(self, algorithm):
         if (algorithm == "prim"):
-            edgeMST = searchPrim(self.edgeList, len(self.adjacencyMatrix))
+            edgeMST = searchPrim(self.edgeList, len(self.nameList))
         else:
-            edgeMST = searchKruskal(self.edgeList, len(self.adjacencyMatrix))
+            edgeMST = searchKruskal(self.edgeList, len(self.nameList))
 
         nx.draw_networkx_edges(self.graph, self.pos, edgelist=edgeMST, edge_color="red", width=5)
         edge_labels = nx.get_edge_attributes(self.graph, "weight")
@@ -155,9 +156,141 @@ class GUI(Tk):
         self.resultText.config(state=DISABLED)
 
 
-    def addNode(self):
-        print("Add Node")
+    def addWindow(self):
+        addWindow = Toplevel()
+        addWindow.title("Add Node")
+        addWindow.resizable(False, False)
+        # Frame
+        frameMain = Frame(addWindow, height=300, width=500, bg="#696969")
+        frameAddNode = Frame(frameMain, bg="#696969")
+        frameAddEdge = Frame(frameMain, bg="#696969")
+        # Label
+        labelNewNode = Label(frameAddNode, text="Node", bg="#696969", fg="white", justify="left", font=3)
+        labelNode1 = Label(frameAddEdge, text="Node 1", bg="#696969", fg="white", justify="left", font=3)
+        labelNode2 = Label(frameAddEdge, text="Node 2", bg="#696969", fg="white", justify="left", font=3)
+        labelWeight = Label(frameAddEdge, text="Weight", bg="#696969", fg="white", justify="left", font=3)
+        # Entry
+        self.newNode = Entry(frameAddNode)
+        self.newNode1 = Entry(frameAddEdge)
+        self.newNode2 = Entry(frameAddEdge)
+        self.newWeight = Entry(frameAddEdge)
+        # Button
+        addNodeButton = Button(frameAddNode, text="Add Node", command=self.addNode, padx=5, pady=5)
+        addEdgeButton = Button(frameAddEdge, text="Add Edge", command=self.addEdge, padx=5, pady=5)
+        # Pack
+        labelNewNode.grid(row=0, column=0, padx=(0,30))
+        self.newNode.grid(row=0, column=1)
+        labelNode1.grid(row=0, column=0, padx=(0,15))
+        self.newNode1.grid(row=0, column=1)
+        labelNode2.grid(row=1, column=0, padx=(0,15))
+        self.newNode2.grid(row=1, column=1)
+        labelWeight.grid(row=2, column=0, padx=(0,15))
+        self.newWeight.grid(row=2, column=1)
+        addNodeButton.grid(row=1, column=0, columnspan=2, pady=15)
+        addEdgeButton.grid(row=3, column=0, columnspan=2, pady=15)
+        frameAddNode.pack(side=TOP, pady=(20,20))
+        frameAddEdge.pack(side=BOTTOM, pady=(0, 20))
+        frameMain.pack_propagate(False)
+        frameMain.pack()
 
+
+    def addNode(self):
+        if (len(self.newNode.get()) == 0):
+            messagebox.showerror(title="Error", message="Field must be filled")
+        elif (self.newNode.get() in self.nameList):
+            messagebox.showerror(title="Error", message="Node already exist")
+        else:
+            self.nameList.append(self.newNode.get())
+            messagebox.showinfo(title="Success", message="Node has been added")
+            self.visualizeGraph()
+
+        self.newNode.delete(0, END)
+
+
+    def addEdge(self):
+        if (len(self.newNode1.get()) == 0 or len(self.newNode2.get()) == 0 or len(self.newWeight.get()) == 0):
+            messagebox.showerror(title="Error", message="All field must be filled")
+        elif (not (self.newWeight.get().isdigit())):
+            messagebox.showerror(title="Error", message="Weight field must be an integer")
+        else:
+            newEdge = (str(self.newNode1.get()), str(self.newNode2.get()), int(self.newWeight.get()))
+            self.edgeList.append(newEdge)
+            messagebox.showinfo(title="Success", message="Edge has been added")
+            self.visualizeGraph()
+
+        self.newNode1.delete(0, END)
+        self.newNode2.delete(0, END)
+        self.newWeight.delete(0, END)
+
+
+    def deleteNodeWindow(self):
+        deleteWindow = Toplevel()
+        deleteWindow.title("Delete Node")
+        deleteWindow.resizable(False, False)
+        # Frame
+        frameMain = Frame(deleteWindow, height=300, width=500, bg="#696969")
+        frameDeleteNode = Frame(frameMain, bg="#696969")
+        frameDeleteEdge = Frame(frameMain, bg="#696969")
+        # Label
+        labelDeleteNode = Label(frameDeleteNode, text="Node", bg="#696969", fg="white", justify="left", font=3)
+        labelDelNode1 = Label(frameDeleteEdge, text="Node 1", bg="#696969", fg="white", justify="left", font=3)
+        labelDelNode2 = Label(frameDeleteEdge, text="Node 2", bg="#696969", fg="white", justify="left", font=3)
+        labelDelWeight = Label(frameDeleteEdge, text="Weight", bg="#696969", fg="white", justify="left", font=3)
+        # Entry
+        self.delNode = Entry(frameDeleteNode)
+        self.delNode1 = Entry(frameDeleteEdge)
+        self.delNode2 = Entry(frameDeleteEdge)
+        self.delWeight = Entry(frameDeleteEdge)
+        delNodeButton = Button(frameDeleteNode, text="Delete Node", command=self.deleteNode, padx=5, pady=5)
+        delEdgeButton = Button(frameDeleteEdge, text="Delete Edge", command=self.deleteEdge, padx=5, pady=5)
+        # Pack
+        labelDeleteNode.grid(row=0, column=0, padx=(0,30))
+        self.delNode.grid(row=0, column=1)
+        labelDelNode1.grid(row=0, column=0, padx=(0,15))
+        self.delNode1.grid(row=0, column=1)
+        labelDelNode2.grid(row=1, column=0, padx=(0,15))
+        self.delNode2.grid(row=1, column=1)
+        labelDelWeight.grid(row=2, column=0, padx=(0,15))
+        self.delWeight.grid(row=2, column=1)
+        delNodeButton.grid(row=1, column=0, columnspan=2, pady=15)
+        delEdgeButton.grid(row=3, column=0, columnspan=2, pady=15)
+        frameDeleteNode.pack(side=TOP, pady=(20,20))
+        frameDeleteEdge.pack(side=BOTTOM, pady=(0, 20))
+        frameMain.pack_propagate(False)
+        frameMain.pack()
 
     def deleteNode(self):
-        print("Delete Node")
+        if (len(self.delNode.get()) == 0):
+            messagebox.showerror(title="Error", message="Field must be filled")
+        elif (not self.delNode.get() in self.nameList):
+            messagebox.showerror(title="Error", message="Node doesn't exist")
+        else:
+            self.nameList.remove(self.delNode.get())
+
+            for edge in self.edgeList:
+                if ((edge[0] == self.delNode.get()) or (edge[1] == self.delNode.get())):
+                    self.edgeList.remove(edge)
+
+            messagebox.showinfo(title="Success", message="Node has been deleted")
+            self.visualizeGraph()
+
+        self.delNode.delete(0, END)
+
+
+    def deleteEdge(self):
+        if (len(self.delNode1.get()) == 0 or len(self.delNode2.get()) == 0 or len(self.delWeight.get()) == 0):
+            messagebox.showerror(title="Error", message="All field must be filled")
+        elif (not (self.delWeight.get().isdigit())):
+            messagebox.showerror(title="Error", message="Weight field must be an integer")
+        else:
+            delEdge = (str(self.delNode1.get()), str(self.delNode2.get()), int(self.delWeight.get()))
+            if (not delEdge in self.edgeList):
+                messagebox.showerror(title="Error", message="Edge doesn't exist")
+            else:
+                self.edgeList.remove(delEdge)
+                messagebox.showinfo(title="Success", message="Edge has been deleted")
+                self.visualizeGraph()
+
+        self.delNode1.delete(0, END)
+        self.delNode2.delete(0, END)
+        self.delWeight.delete(0, END)
