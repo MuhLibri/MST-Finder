@@ -1,4 +1,4 @@
-from Helper import isIncident, isCircuit
+from Utils import isIncident, isCircuit
 
 
 def searchPrim(edgeList: list[tuple((str, str, int))], n: int) -> list[tuple((str, str, int))]:
