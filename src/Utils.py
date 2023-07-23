@@ -34,3 +34,12 @@ def isCircuit(edge: tuple((str, str, int)), mst: list[tuple((str, str, int))]) -
             circuit = True
 
     return circuit
+
+
+def calculateMSTWeight(mst):
+    sum = 0
+
+    for edge in mst:
+        sum += edge[2]
+
+    return sum
