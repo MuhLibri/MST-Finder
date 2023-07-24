@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from Prim import searchPrim
 from Kruskal import searchKruskal
+from Cluster import searchCluster
 from Utils import matrixToEdges, calculateMSTWeight
 
 
@@ -48,9 +49,9 @@ class GUI(Tk):
         self.resultText.config(state=DISABLED)
         # Cluster Section
         clusterLabel = Label(frameRight, text="Cluster", font=("Helvetica",20,"bold"), bg="#696969", fg="white")
-        nLabel = Label(frameCluster, text="N", font=custom_font, padx=6, pady=6, bg="darkgray")
-        self.clusterText = Text(frameCluster, height=1, width=10, font=custom_font, padx=6, pady=6, relief="sunken")
-        searchClusterButton = Button(frameSearchCluster, text="Search", font=custom_font, command=self.searchCluster, width=7)
+        nLabel = Label(frameCluster, text="N", font=custom_font, bg="darkgray")
+        clusterEntry = Entry(frameCluster, font=custom_font, width=10, justify="center", relief="sunken")
+        searchClusterButton = Button(frameSearchCluster, text="Search", font=custom_font, command=lambda: self.searchCluster(clusterEntry.get()), width=7)
         # Config Section
         renameButton = Button(frameConfig, text="Rename Node", font=custom_font, command=self.renameWindow, width=15)
         addNodeButton = Button(frameConfig, text="Add Node/Edge", font=custom_font, command=self.addWindow, width=15)
@@ -67,14 +68,12 @@ class GUI(Tk):
         resultLabel.pack(side=LEFT)
         self.resultText.pack(side=RIGHT)
         frameResult.pack(side=TOP, pady=(0,65))
-
         clusterLabel.pack(side=TOP, pady=(0,10))
         searchClusterButton.pack(pady=(15, 0))
         frameSearchCluster.pack(side=BOTTOM, expand=TRUE, fill=BOTH)
         nLabel.pack(side=LEFT)
-        self.clusterText.pack(side=RIGHT)
+        clusterEntry.pack(side=RIGHT)
         frameCluster.pack(side=TOP, pady=(0,35))
-
         renameButton.pack(pady=7)
         addNodeButton.pack(pady=7)
         deleteNodeButton.pack(pady=7)
@@ -183,7 +182,9 @@ class GUI(Tk):
 
         self.resultText.config(state=NORMAL)
         self.resultText.delete(0.0, END)
-        self.resultText.insert(END, calculateMSTWeight(self.edgeMST))
+        self.resultText.insert(1.0, calculateMSTWeight(self.edgeMST))
+        self.resultText.tag_config("center", justify="center")
+        self.resultText.tag_add("center", 1.0, "end")
         self.resultText.config(state=DISABLED)
 
 
@@ -219,7 +220,7 @@ class GUI(Tk):
         elif (not self.oldName.get() in self.nameList):
             messagebox.showerror(title="Error", message="Node doesn't exist!")
         elif (self.newName.get() in self.nameList):
-            messagebox.showerror(title="Error", message="New name already exist!")
+            messagebox.showerror(title="Error", message='"' + self.newName.get() + '"' + " already exist!")
         else:
             index = self.nameList.index(self.oldName.get())
             self.nameList[index] = self.newName.get()
@@ -395,6 +396,36 @@ class GUI(Tk):
         self.delWeight.delete(0, END)
 
 
-    def searchCluster(self):
+    def searchCluster(self, n):
+        if (len(n) == 0):
+            messagebox.showerror(title="Error", message="Field must be filled")
+        elif (not (n.isdigit())):
+            messagebox.showerror(title="Error", message="N must be an integer!")
+        else:
+            n = int(n)
+            if (n <= 0):
+                messagebox.showerror(title="Error", message="N must be greater than zero")
+            elif (n > len(self.nameList)):
+                messagebox.showerror(title="Error", message="N must be less than or equal to the number of nodes")
+            else:
+                plt.clf()
 
-        pass
+                edgeCluster = searchCluster(self.edgeMST, n)
+
+                graph = nx.Graph()
+                graph.add_nodes_from(self.nameList)
+                graph.add_weighted_edges_from(edgeCluster)
+
+                pos = nx.spring_layout(graph, seed=5)
+                nx.draw_networkx_nodes(graph, pos, node_size=[len(v) * 1000 for v in graph.nodes()])
+                nx.draw_networkx_edges(graph, pos, edgelist=graph.edges, width=5, edge_color="red")
+                nx.draw_networkx_labels(graph, pos, font_size=20, font_family="sans-serif")
+                edge_labels = nx.get_edge_attributes(graph, "weight")
+                nx.draw_networkx_edge_labels(graph, pos, edge_labels, font_size=10)
+
+                ax = plt.gca()
+                ax.margins(0.08)
+                plt.axis("off")
+                plt.tight_layout()
+
+                self.canvas.draw()
