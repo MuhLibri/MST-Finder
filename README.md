@@ -1,4 +1,4 @@
-# MST-Finder
+![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/cb1cde69-95a1-4ba0-a2c3-c77b0080bae2)# MST-Finder
 MST-Finder merupakan program berbasis GUI yang mencari Minimum Spanning Tree (MST) dari suatu graf. Pencarian MST dilakukan menggunakan algoritma prim dan algoritma kruskal.
 
 
@@ -25,7 +25,11 @@ Untuk mencari MST, pengguna dapat memilih algoritma yang ingin digunakan pada ba
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/8abdf8b7-dcad-41ed-922c-877df02f4e9b)
 
-Untuk mengembalikan tampilan graf yang asli dapat menekan tombol Reset. Pengguna juga dapat merename node dengan mengeklik tombol Rename Node pada bagian kanan bawah. Halaman Rename akan muncul dan pengguna dapat mengganti nama node di halaman tersebut.
+Untuk mengembalikan tampilan graf yang asli dapat menekan tombol Reset.
+
+![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/fa4217f7-bfe7-4b3e-9808-50698fcd05fd)
+
+Pengguna juga dapat merename node dengan mengeklik tombol Rename Node pada bagian kanan bawah. Halaman Rename akan muncul dan pengguna dapat mengganti nama node di halaman tersebut.
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/7884c92a-9f0d-412a-9f60-0972d770fd18)
 
@@ -37,7 +41,7 @@ Pengguna juga dapat menghapus node/edge dengan mengeklik tombol Delete Node/Edge
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/44c25b8a-dd9a-4823-9310-049fdd975e36)
 
-Pengguna dapat mencari cluster berdasarkan MST. Untuk mencari cluster pengguna perlu mencari MST terlebih dahulu lalu memasukkan Field N dan klik tombol search.
+Pengguna dapat mencari cluster berdasarkan MST. Untuk mencari cluster pengguna perlu mencari MST terlebih dahulu lalu mengisi field N dan klik tombol search.
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/1b0d30a5-4e8e-4d5d-84e9-604ea9e5e1d1)
 
