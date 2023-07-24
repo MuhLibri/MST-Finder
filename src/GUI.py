@@ -12,7 +12,6 @@ from Utils import matrixToEdges, calculateMSTWeight
 
 class GUI(Tk):
     # Global Variables
-    adjacencyMatrix = []
     nameList = []
     edgeList = []
 
@@ -46,8 +45,9 @@ class GUI(Tk):
         self.resultText = Text(frameResult, height=1, width=10, font=custom_font, padx=6, pady=6, relief="sunken")
         self.resultText.config(state=DISABLED)
         # Config Section
+        renameButton = Button(frameConfig, text="Rename Node", font=custom_font, command=self.renameWindow, width=15)
         addNodeButton = Button(frameConfig, text="Add Node/Edge", font=custom_font, command=self.addWindow, width=15)
-        deleteNodeButton = Button(frameConfig, text="Delete Node/Edge", font=custom_font, command=self.deleteNodeWindow, width=15)
+        deleteNodeButton = Button(frameConfig, text="Delete Node/Edge", font=custom_font, command=self.deleteWindow, width=15)
         # Pack
         algorithmLabel.pack(padx=20, pady=(20, 0), anchor="w")
         primButton.pack(padx=20, anchor="w")
@@ -59,6 +59,7 @@ class GUI(Tk):
         resultLabel.pack(side=LEFT)
         self.resultText.pack(side=RIGHT)
         frameResult.pack(side=TOP)
+        renameButton.pack(pady=7)
         addNodeButton.pack(pady=7)
         deleteNodeButton.pack(pady=7)
         frameConfig.pack(side=BOTTOM)
@@ -95,7 +96,7 @@ class GUI(Tk):
     # Functions
     def openFile(self):
         file = filedialog.askopenfile(title="Select a File", filetypes=[("txt", "*.txt")])
-        self.adjacencyMatrix = [[int(num.strip()) for num in line.split(' ')] for line in file]
+        adjacencyMatrix = [[int(num.strip()) for num in line.split(' ')] for line in file]
         file.close()
 
         self.fileText.config(state=NORMAL)
@@ -104,10 +105,10 @@ class GUI(Tk):
         self.fileText.config(state=DISABLED)
 
         self.nameList.clear()
-        for i in range(len(self.adjacencyMatrix)):
+        for i in range(len(adjacencyMatrix)):
             self.nameList.append(str(i+1))
 
-        self.edgeList = matrixToEdges(self.adjacencyMatrix, self.nameList)
+        self.edgeList = matrixToEdges(adjacencyMatrix, self.nameList)
 
         self.visualizeGraph()
 
@@ -156,9 +157,64 @@ class GUI(Tk):
         self.resultText.config(state=DISABLED)
 
 
+    def renameWindow(self):
+        renameWindow = Toplevel()
+        renameWindow.title("Rename Node")
+        renameWindow.resizable(False, False)
+        # Frame
+        frameMain = Frame(renameWindow, height=300, width=500, bg="#696969")
+        frameRenameNode = Frame(frameMain, bg="#696969")
+        # Label
+        labelOldName = Label(frameRenameNode, text="Old Name", bg="#696969", fg="white", justify="left", font=3)
+        labelNewName = Label(frameRenameNode, text="New Name", bg="#696969", fg="white", justify="left", font=3)
+        # Entry
+        self.oldName = Entry(frameRenameNode)
+        self.newName = Entry(frameRenameNode)
+        # Button
+        addRenameButton = Button(frameRenameNode, text="Rename", command=self.renameNode, padx=5, pady=5)
+        # Pack
+        labelOldName.grid(row=0, column=0, padx=(0,15))
+        self.oldName.grid(row=0, column=1)
+        labelNewName.grid(row=1, column=0, padx=(0,15))
+        self.newName.grid(row=1, column=1)
+        addRenameButton.grid(row=2, column=0, columnspan=2, pady=15)
+        frameRenameNode.pack(pady=(100,0))
+        frameMain.pack_propagate(False)
+        frameMain.pack()
+        print(self.nameList)
+        print(self.edgeList)
+
+
+    def renameNode(self):
+        if ((len(self.oldName.get()) == 0) or (len(self.newName.get()) == 0)):
+            messagebox.showerror(title="Error", message="All field must be filled!")
+        elif (not self.oldName.get() in self.nameList):
+            messagebox.showerror(title="Error", message="Node doesn't exist!")
+        elif (self.newName.get() in self.nameList):
+            messagebox.showerror(title="Error", message="New name already exist!")
+        else:
+            index = self.nameList.index(self.oldName.get())
+            self.nameList[index] = self.newName.get()
+
+            for i in range (len(self.edgeList)):
+                edge = self.edgeList[i]
+                if (edge[0] == self.oldName.get()):
+                    newEdge = (self.newName.get(), edge[1], edge[2])
+                    self.edgeList[i] = newEdge
+                elif (edge[1] == self.oldName.get()):
+                    newEdge = (edge[0], self.newName.get(), edge[2])
+                    self.edgeList[i] = newEdge
+
+            messagebox.showinfo(title="Success", message="Node " + '"' + self.oldName.get() + '"' + " has been renamed to " + '"' + self.newName.get() + '"')
+            self.visualizeGraph()
+
+        self.oldName.delete(0, END)
+        self.newName.delete(0, END)
+
+
     def addWindow(self):
         addWindow = Toplevel()
-        addWindow.title("Add Node")
+        addWindow.title("Add Node/Edge")
         addWindow.resizable(False, False)
         # Frame
         frameMain = Frame(addWindow, height=300, width=500, bg="#696969")
@@ -196,9 +252,9 @@ class GUI(Tk):
 
     def addNode(self):
         if (len(self.newNode.get()) == 0):
-            messagebox.showerror(title="Error", message="Field must be filled")
+            messagebox.showerror(title="Error", message="Field must be filled!")
         elif (self.newNode.get() in self.nameList):
-            messagebox.showerror(title="Error", message="Node already exist")
+            messagebox.showerror(title="Error", message="Node already exist!")
         else:
             self.nameList.append(self.newNode.get())
             messagebox.showinfo(title="Success", message="Node has been added")
@@ -209,23 +265,28 @@ class GUI(Tk):
 
     def addEdge(self):
         if (len(self.newNode1.get()) == 0 or len(self.newNode2.get()) == 0 or len(self.newWeight.get()) == 0):
-            messagebox.showerror(title="Error", message="All field must be filled")
+            messagebox.showerror(title="Error", message="All field must be filled!")
         elif (not (self.newWeight.get().isdigit())):
-            messagebox.showerror(title="Error", message="Weight field must be an integer")
+            messagebox.showerror(title="Error", message="Weight field must be an integer!")
         else:
-            newEdge = (str(self.newNode1.get()), str(self.newNode2.get()), int(self.newWeight.get()))
-            self.edgeList.append(newEdge)
-            messagebox.showinfo(title="Success", message="Edge has been added")
-            self.visualizeGraph()
+            newEdge1 = (str(self.newNode1.get()), str(self.newNode2.get()), int(self.newWeight.get()))
+            newEdge2 = (str(self.newNode2.get()), str(self.newNode1.get()), int(self.newWeight.get()))
+
+            if (newEdge1 in self.edgeList or newEdge2 in self.edgeList):
+                messagebox.showerror(title="Error", message="Edge already exist!")
+            else:
+                self.edgeList.append(newEdge1)
+                messagebox.showinfo(title="Success", message="Edge has been added")
+                self.visualizeGraph()
 
         self.newNode1.delete(0, END)
         self.newNode2.delete(0, END)
         self.newWeight.delete(0, END)
 
 
-    def deleteNodeWindow(self):
+    def deleteWindow(self):
         deleteWindow = Toplevel()
-        deleteWindow.title("Delete Node")
+        deleteWindow.title("Delete Node/Edge")
         deleteWindow.resizable(False, False)
         # Frame
         frameMain = Frame(deleteWindow, height=300, width=500, bg="#696969")
@@ -259,17 +320,23 @@ class GUI(Tk):
         frameMain.pack_propagate(False)
         frameMain.pack()
 
+
     def deleteNode(self):
         if (len(self.delNode.get()) == 0):
-            messagebox.showerror(title="Error", message="Field must be filled")
+            messagebox.showerror(title="Error", message="Field must be filled!")
         elif (not self.delNode.get() in self.nameList):
-            messagebox.showerror(title="Error", message="Node doesn't exist")
+            messagebox.showerror(title="Error", message="Node doesn't exist!")
         else:
             self.nameList.remove(self.delNode.get())
+            removeList = []
 
             for edge in self.edgeList:
+                print(edge)
                 if ((edge[0] == self.delNode.get()) or (edge[1] == self.delNode.get())):
-                    self.edgeList.remove(edge)
+                    removeList.append(edge)
+
+            for edge in removeList:
+                self.edgeList.remove(edge)
 
             messagebox.showinfo(title="Success", message="Node has been deleted")
             self.visualizeGraph()
@@ -279,17 +346,22 @@ class GUI(Tk):
 
     def deleteEdge(self):
         if (len(self.delNode1.get()) == 0 or len(self.delNode2.get()) == 0 or len(self.delWeight.get()) == 0):
-            messagebox.showerror(title="Error", message="All field must be filled")
+            messagebox.showerror(title="Error", message="All field must be filled!")
         elif (not (self.delWeight.get().isdigit())):
-            messagebox.showerror(title="Error", message="Weight field must be an integer")
+            messagebox.showerror(title="Error", message="Weight field must be an integer!")
         else:
-            delEdge = (str(self.delNode1.get()), str(self.delNode2.get()), int(self.delWeight.get()))
-            if (not delEdge in self.edgeList):
-                messagebox.showerror(title="Error", message="Edge doesn't exist")
-            else:
-                self.edgeList.remove(delEdge)
+            delEdge1 = (str(self.delNode1.get()), str(self.delNode2.get()), int(self.delWeight.get()))
+            delEdge2 = (str(self.delNode2.get()), str(self.delNode1.get()), int(self.delWeight.get()))
+            if (delEdge1 in self.edgeList):
+                self.edgeList.remove(delEdge1)
                 messagebox.showinfo(title="Success", message="Edge has been deleted")
                 self.visualizeGraph()
+            elif (delEdge2 in self.edgeList):
+                self.edgeList.remove(delEdge2)
+                messagebox.showinfo(title="Success", message="Edge has been deleted")
+                self.visualizeGraph()
+            else:
+                messagebox.showerror(title="Error", message="Edge doesn't exist!")
 
         self.delNode1.delete(0, END)
         self.delNode2.delete(0, END)
