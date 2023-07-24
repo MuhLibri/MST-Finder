@@ -14,6 +14,7 @@ class GUI(Tk):
     # Global Variables
     nameList = []
     edgeList = []
+    edgeMST = []
 
     def __init__(self):
         super().__init__()
@@ -29,8 +30,11 @@ class GUI(Tk):
         frameAlgorithm = Frame(frameRight, bg="darkgray")
         frameSolve = Frame(frameAlgorithm, bg="#696969")
         frameResult = Frame(frameRight, bg="darkgray")
+        frameCluster = Frame(frameRight, bg="darkgray")
+        frameSearchCluster = Frame(frameCluster, bg="#696969")
         frameConfig = Frame(frameRight, bg="#696969")
         # Algorithm Section
+        mstLabel = Label(frameRight, text="MST Finder", font=("Helvetica",20,"bold"), bg="#696969", fg="white")
         algorithmLabel = Label(frameAlgorithm, text="Algorithm:", font=(20), bg="darkgray")
         algorithmChoice = StringVar()
         algorithmChoice.set("prim")
@@ -39,24 +43,38 @@ class GUI(Tk):
         solveButton = Button(frameSolve, text="Solve", font=custom_font, command=lambda: self.solve(algorithmChoice.get()), width=7)
         resetButton = Button(frameSolve, text="Reset", font=custom_font, command=self.visualizeGraph, width=7)
         # Result Section
-        resultLabel = Label(frameResult, text="MST Weight ", font=custom_font, padx=6, pady=6, bg="darkgray")
+        resultLabel = Label(frameResult, text="MST Weight", font=custom_font, padx=6, pady=6, bg="darkgray")
         self.resultText = Text(frameResult, height=1, width=10, font=custom_font, padx=6, pady=6, relief="sunken")
         self.resultText.config(state=DISABLED)
+        # Cluster Section
+        clusterLabel = Label(frameRight, text="Cluster", font=("Helvetica",20,"bold"), bg="#696969", fg="white")
+        nLabel = Label(frameCluster, text="N", font=custom_font, padx=6, pady=6, bg="darkgray")
+        self.clusterText = Text(frameCluster, height=1, width=10, font=custom_font, padx=6, pady=6, relief="sunken")
+        searchClusterButton = Button(frameSearchCluster, text="Search", font=custom_font, command=self.searchCluster, width=7)
         # Config Section
         renameButton = Button(frameConfig, text="Rename Node", font=custom_font, command=self.renameWindow, width=15)
         addNodeButton = Button(frameConfig, text="Add Node/Edge", font=custom_font, command=self.addWindow, width=15)
         deleteNodeButton = Button(frameConfig, text="Delete Node/Edge", font=custom_font, command=self.deleteWindow, width=15)
         # Pack
+        mstLabel.pack(side=TOP, pady=(0,10))
         algorithmLabel.pack(padx=20, pady=(20, 0), anchor="w")
         primButton.pack(padx=20, anchor="w")
         kruskalButton.pack(padx=20, pady=(0, 20), anchor="w")
         resetButton.pack(side=LEFT, padx=(0,15), pady=(15, 0))
         solveButton.pack(side=RIGHT, pady=(15, 0))
         frameSolve.pack(fill=X)
-        frameAlgorithm.pack(side=TOP, pady=100)
+        frameAlgorithm.pack(side=TOP, pady=(0,20))
         resultLabel.pack(side=LEFT)
         self.resultText.pack(side=RIGHT)
-        frameResult.pack(side=TOP)
+        frameResult.pack(side=TOP, pady=(0,65))
+
+        clusterLabel.pack(side=TOP, pady=(0,10))
+        searchClusterButton.pack(pady=(15, 0))
+        frameSearchCluster.pack(side=BOTTOM, expand=TRUE, fill=BOTH)
+        nLabel.pack(side=LEFT)
+        self.clusterText.pack(side=RIGHT)
+        frameCluster.pack(side=TOP, pady=(0,35))
+
         renameButton.pack(pady=7)
         addNodeButton.pack(pady=7)
         deleteNodeButton.pack(pady=7)
@@ -141,13 +159,13 @@ class GUI(Tk):
         plt.clf()
 
         if (algorithm == "prim"):
-            edgeMST = searchPrim(self.edgeList, len(self.nameList))
+            self.edgeMST = searchPrim(self.edgeList, len(self.nameList))
         else:
-            edgeMST = searchKruskal(self.edgeList, len(self.nameList))
+            self.edgeMST = searchKruskal(self.edgeList, len(self.nameList))
 
         graph = nx.Graph()
         graph.add_nodes_from(self.nameList)
-        graph.add_weighted_edges_from(edgeMST)
+        graph.add_weighted_edges_from(self.edgeMST)
 
         pos = nx.spring_layout(graph, seed=5)
         nx.draw_networkx_nodes(graph, pos, node_size=[len(v) * 1000 for v in graph.nodes()])
@@ -156,11 +174,16 @@ class GUI(Tk):
         edge_labels = nx.get_edge_attributes(graph, "weight")
         nx.draw_networkx_edge_labels(graph, pos, edge_labels, font_size=10)
 
+        ax = plt.gca()
+        ax.margins(0.08)
+        plt.axis("off")
+        plt.tight_layout()
+
         self.canvas.draw()
 
         self.resultText.config(state=NORMAL)
         self.resultText.delete(0.0, END)
-        self.resultText.insert(END, calculateMSTWeight(edgeMST))
+        self.resultText.insert(END, calculateMSTWeight(self.edgeMST))
         self.resultText.config(state=DISABLED)
 
 
@@ -370,3 +393,8 @@ class GUI(Tk):
         self.delNode1.delete(0, END)
         self.delNode2.delete(0, END)
         self.delWeight.delete(0, END)
+
+
+    def searchCluster(self):
+
+        pass

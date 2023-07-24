@@ -1,0 +1,2 @@
+def searchCluster(edgeMST):
+    pass
