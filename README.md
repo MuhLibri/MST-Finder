@@ -21,7 +21,7 @@ Silahkan pilih file txt berisikan graf, lalu klik tombol open. Setelah itu, graf
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/61385d98-59f2-4420-8276-cbd79ae0f337)
 
-Untuk mencari MST, pengguna dapat memilih algoritma yang ingin digunakan pada bagian kanan atas, setelah memilih klik tombol Solve. Hasil MST-pun akan langsung divisualisasikan.
+Untuk mencari MST, pengguna dapat memilih algoritma yang ingin digunakan pada bagian kanan atas. Setelah memilih algoritma, klik tombol Solve. Hasil MST-pun akan langsung divisualisasikan.
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/8abdf8b7-dcad-41ed-922c-877df02f4e9b)
 
