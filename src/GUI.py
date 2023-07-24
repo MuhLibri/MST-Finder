@@ -181,8 +181,6 @@ class GUI(Tk):
         frameRenameNode.pack(pady=(100,0))
         frameMain.pack_propagate(False)
         frameMain.pack()
-        print(self.nameList)
-        print(self.edgeList)
 
 
     def renameNode(self):
@@ -331,7 +329,6 @@ class GUI(Tk):
             removeList = []
 
             for edge in self.edgeList:
-                print(edge)
                 if ((edge[0] == self.delNode.get()) or (edge[1] == self.delNode.get())):
                     removeList.append(edge)
 
