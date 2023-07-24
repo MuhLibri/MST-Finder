@@ -23,8 +23,6 @@ class GUI(Tk):
         # GUI Variables
         custom_font = font.Font(size=11)
         mainPadding = 20
-        self.graph = nx.Graph()
-        self.pos = nx.spring_layout(self.graph, seed=5)
 
         # Frame Right
         frameRight = Frame(self, height=700, width=250, bg="#696969", padx=mainPadding, pady=mainPadding)
@@ -116,16 +114,16 @@ class GUI(Tk):
     def visualizeGraph(self):
         plt.clf()
 
-        self.graph = nx.Graph()
-        self.graph.add_nodes_from(self.nameList)
-        self.graph.add_weighted_edges_from(self.edgeList)
+        graph = nx.Graph()
+        graph.add_nodes_from(self.nameList)
+        graph.add_weighted_edges_from(self.edgeList)
 
-        self.pos = nx.spring_layout(self.graph, seed=5)
-        nx.draw_networkx_nodes(self.graph, self.pos, node_size=[len(v) * 1000 for v in self.graph.nodes()])
-        nx.draw_networkx_edges(self.graph, self.pos, edgelist=self.graph.edges, width=5)
-        nx.draw_networkx_labels(self.graph, self.pos, font_size=20, font_family="sans-serif")
-        edge_labels = nx.get_edge_attributes(self.graph, "weight")
-        nx.draw_networkx_edge_labels(self.graph, self.pos, edge_labels, font_size=10)
+        pos = nx.spring_layout(graph, seed=5)
+        nx.draw_networkx_nodes(graph, pos, node_size=[len(v) * 1000 for v in graph.nodes()])
+        nx.draw_networkx_edges(graph, pos, edgelist=graph.edges, width=5)
+        nx.draw_networkx_labels(graph, pos, font_size=20, font_family="sans-serif")
+        edge_labels = nx.get_edge_attributes(graph, "weight")
+        nx.draw_networkx_edge_labels(graph, pos, edge_labels, font_size=10)
 
         ax = plt.gca()
         ax.margins(0.08)
@@ -140,14 +138,23 @@ class GUI(Tk):
 
 
     def solve(self, algorithm):
+        plt.clf()
+
         if (algorithm == "prim"):
             edgeMST = searchPrim(self.edgeList, len(self.nameList))
         else:
             edgeMST = searchKruskal(self.edgeList, len(self.nameList))
 
-        nx.draw_networkx_edges(self.graph, self.pos, edgelist=edgeMST, edge_color="red", width=5)
-        edge_labels = nx.get_edge_attributes(self.graph, "weight")
-        nx.draw_networkx_edge_labels(self.graph, self.pos, edge_labels, font_size=10)
+        graph = nx.Graph()
+        graph.add_nodes_from(self.nameList)
+        graph.add_weighted_edges_from(edgeMST)
+
+        pos = nx.spring_layout(graph, seed=5)
+        nx.draw_networkx_nodes(graph, pos, node_size=[len(v) * 1000 for v in graph.nodes()])
+        nx.draw_networkx_edges(graph, pos, edgelist=graph.edges, width=5, edge_color="red")
+        nx.draw_networkx_labels(graph, pos, font_size=20, font_family="sans-serif")
+        edge_labels = nx.get_edge_attributes(graph, "weight")
+        nx.draw_networkx_edge_labels(graph, pos, edge_labels, font_size=10)
 
         self.canvas.draw()
 
