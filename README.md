@@ -13,7 +13,7 @@ Untuk menjalankan program, pengguna cukup menjalankan ```Main.py``` pada folder 
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/c20a4340-b765-4ea8-bc14-ea0f3994c6c2)
 
-Untuk membaca file txt graf, dapat mengeklik tombol Open File pada bagian bawah kiri, setelah itu akan muncul halaman memilih file.
+Untuk membaca file txt graf, pengguna dapat mengeklik tombol Open File pada bagian bawah kiri, setelah itu akan muncul halaman memilih file.
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/f8f21285-2104-41e6-86a9-58383bd59015)
 
