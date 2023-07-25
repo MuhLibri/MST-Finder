@@ -1,5 +1,5 @@
 # MST-Finder
-MST-Finder merupakan program berbasis GUI yang mencari Minimum Spanning Tree (MST) dari suatu graf. Pencarian MST dilakukan menggunakan algoritma prim dan algoritma kruskal.
+MST-Finder merupakan program berbasis GUI yang mencari Minimum Spanning Tree (MST) dari suatu graf. Pencarian MST dilakukan menggunakan algoritma prim dan algoritma kruskal. MST-Finder juga dapat melakukan clustering berdasarkan MST yang ditemukan.
 
 
 # Requirements
@@ -29,19 +29,19 @@ Untuk mengembalikan tampilan graf yang asli dapat menekan tombol Reset.
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/fa4217f7-bfe7-4b3e-9808-50698fcd05fd)
 
-Pengguna juga dapat merename node dengan mengeklik tombol Rename Node pada bagian kanan bawah. Halaman Rename akan muncul dan pengguna dapat mengganti nama node di halaman tersebut.
+Pengguna juga dapat merename node dengan mengeklik tombol Rename Node pada bagian kanan bawah. Halaman Rename akan muncul dan pengguna dapat mengganti nama node di halaman tersebut (Field Old Name berisikan nama node yang ingin diganti, sedangkan field New Name berisikan nama node yang baru).
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/7884c92a-9f0d-412a-9f60-0972d770fd18)
 
-Pengguna juga dapat menambah node/edge dengan mengeklik tombol Add Node/Edge. Halaman Add Node/Edge akan muncul. Di sini pengguna dapat menambah node atau edge.
+Pengguna juga dapat menambah node/edge dengan mengeklik tombol Add Node/Edge. Halaman Add Node/Edge akan muncul. Di sini pengguna dapat menambah node atau edge (Untuk menambah node, cukup isi field Node dan klik tombol Add Node. Sedangkan, untuk menambah edge pengguna harus mengisi field Node 1, Node 2, dan Weight lalu klik tombol Add Edge).
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/4dbaa91b-ed8c-4ce1-bb8e-f5a2bd3ce757)
 
-Pengguna juga dapat menghapus node/edge dengan mengeklik tombol Delete Node/Edge. Halaman Delete Node/Edge akan muncul. Di sini pengguna dapat menghapus node atau edge.
+Pengguna juga dapat menghapus node/edge dengan mengeklik tombol Delete Node/Edge. Halaman Delete Node/Edge akan muncul. Di sini pengguna dapat menghapus node atau edge (Untuk menghapus node, cukup isi field Node dan klik tombol Delete Node. Sedangkan, untuk menghapus edge pengguna harus mengisi field Node 1, Node 2, dan Weight lalu klik tombol Delete Edge).
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/44c25b8a-dd9a-4823-9310-049fdd975e36)
 
-Pengguna dapat mencari cluster berdasarkan MST. Untuk mencari cluster pengguna perlu mencari MST terlebih dahulu lalu mengisi field N dan klik tombol search.
+Pengguna dapat melakukan clustering berdasarkan MST. Untuk melakukan clustering pengguna perlu mencari MST terlebih dahulu lalu mengisi field N dan klik tombol Search.
 
 ![image](https://github.com/MuhLibri/MST-Finder/assets/104043362/1b0d30a5-4e8e-4d5d-84e9-604ea9e5e1d1)
 
