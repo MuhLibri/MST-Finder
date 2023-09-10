@@ -1,4 +1,4 @@
-<img width="590" alt="image" src="https://github.com/MuhLibri/MST-Finder/assets/104043362/340c10d8-01e6-47f3-b811-c23095a078d7"># MST-Finder
+# MST-Finder
 MST-Finder merupakan program berbasis GUI yang mencari Minimum Spanning Tree (MST) dari suatu graf. Pencarian MST dilakukan menggunakan algoritma prim dan algoritma kruskal. MST-Finder juga dapat melakukan clustering berdasarkan MST yang ditemukan.
 
 
